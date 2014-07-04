@@ -1,9 +1,8 @@
 #!/usr/bin/python -O
-# source: https://github.com/pdp7/beaglebackpack/blob/master/README.md
 
 from Adafruit_8x8 import ColorEightByEight
 from twisted.internet import reactor, protocol
-
+import time
 
 grid = ColorEightByEight(address=0x70)
 
@@ -13,17 +12,10 @@ class Echo(protocol.Protocol ):
             print "clear matrix"
             clear_matrix()
         else:           
-            print "received:"
-            received=  data.split() 
-            print ( received )
-            #print (  received[0]+ '/' + received[1] ) 
-        #echo:        self.transport.write(data)
-
-#        grid.setPixel(x, y, color % 4)
-
-'''for x in range(0, 8):
-    for y in range(0, 8):
-        grid.setPixel(x, y, color % 4)'''
+             x= iter(data)
+             for x, y, color in zip(*([x] * 3)):
+                 grid.setPixel(int(x),int(y), 1 )
+                 time.sleep(0.02)
 
 def clear_matrix():
     for x in range(0, 8):
