@@ -1,4 +1,19 @@
-#install_twisted_rector must be called before importing the reactor
+# This kivy App aims to show you how to interact with 
+# the server (BeagleBone) which accepts to receive commands 
+# for the leds matrix
+
+#imports section
+from kivy.app import App
+from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.stacklayout import StackLayout
+from kivy.uix.anchorlayout import AnchorLayout
+from kivy.uix.button import Button
+from kivy.uix.slider import Slider
+from kivy.uix.spinner import Spinner
+
 from kivy.support import install_twisted_reactor
 install_twisted_reactor()
 
@@ -24,22 +39,6 @@ class EchoFactory(protocol.ClientFactory):
     def clientConnectionFailed(self, conn, reason):
         self.app.print_message("connection failed")
 
-
-from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.stacklayout import StackLayout
-from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.button import Button
-from kivy.uix.slider import Slider
-from kivy.uix.spinner import Spinner
-
-
-# A simple kivy App, with a textbox to enter messages, and
-# a large label to display all the messages received from
-# the server
 class TwistedClientApp(App):
     connection = None
 
@@ -47,6 +46,16 @@ class TwistedClientApp(App):
         root = self.setup_gui()
         self.connect_to_server()
         return root
+        
+    def send_message(self, *args):
+        msg = self.textbox.text
+        if msg and self.connection:
+            self.connection.write(str(self.textbox.text))
+            self.textbox.text = ""
+
+    def print_message(self, msg):
+        self.label.text += msg + "\n"
+        
     def callback(self,instance):
         self.print_message('Button nb <%s> pressed' % instance.text)
         self.print_message(self.Colorspinner.text)
@@ -86,15 +95,6 @@ class TwistedClientApp(App):
     def on_connection(self, connection):
         self.print_message("connected succesfully!")
         self.connection = connection
-
-    def send_message(self, *args):
-        msg = self.textbox.text
-        if msg and self.connection:
-            self.connection.write(str(self.textbox.text))
-            self.textbox.text = ""
-
-    def print_message(self, msg):
-        self.label.text += msg + "\n"
 
 
 if __name__ == '__main__':
