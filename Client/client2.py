@@ -13,19 +13,15 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.button import Button
 from kivy.uix.slider import Slider
 from kivy.uix.spinner import Spinner
-
 from kivy.support import install_twisted_reactor
 install_twisted_reactor()
-
-
-#A simple Client that send messages to the echo server
 from twisted.internet import reactor, protocol
 
 class EchoClient(protocol.Protocol):
-    def connectionMade(self):
+    def connectionMade(self):                               # Event when on a connection
         self.factory.app.on_connection(self.transport)
 
-    def dataReceived(self, data):
+    def dataReceived(self, data):                           # if the server wants to talk to us 
         self.factory.app.print_message(data)
 
 class EchoFactory(protocol.ClientFactory):
@@ -33,18 +29,18 @@ class EchoFactory(protocol.ClientFactory):
     def __init__(self, app):
         self.app = app
 
-    def clientConnectionLost(self, conn, reason):
+    def clientConnectionLost(self, conn, reason):           # We were on a connection and something happened
         self.app.print_message("connection lost")
 
-    def clientConnectionFailed(self, conn, reason):
+    def clientConnectionFailed(self, conn, reason):         # We can't establish a connection
         self.app.print_message("connection failed")
 
 class TwistedClientApp(App):
     connection = None
 
     def build(self):
-        root = self.setup_gui()
-        self.connect_to_server()
+        root = self.setup_gui()                             # Set up the controls
+        self.connect_to_server()                            # try to connect to the board
         return root
         
     def send_message(self, *args):
