@@ -1,14 +1,10 @@
+
+# Copyright (c) Twisted Matrix Laboratories.
+# See LICENSE for details.
+
+
 """
-    BeagleBone Black book code by David Lewin
-    Client 1 version to use with the server 
-   
-    Start first matrixServer.py from the server before running this.
-    
-    
-This simple code aims to show you how to send data packets to
- the server (BeagleBone) which accepts to receive commands 
- for the leds matrix    
-    
+An example client. Run simpleserv.py first before running this.
 """
 
 from twisted.internet import reactor, protocol
