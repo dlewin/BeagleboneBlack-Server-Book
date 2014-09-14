@@ -1,3 +1,6 @@
+""" BeagleBone Black book code by David Lewin
+    Server 1 version to use with the clien 1  """
+
 #!/usr/bin/python -O
 
 import sys
@@ -26,6 +29,7 @@ def clear_matrix():
           grid.setPixel(x, y, 0)
 
 def main():
+    print ("Running Server on port 8000")
     """This runs the protocol on port 8000"""
     factory = protocol.ServerFactory()
     factory.protocol = Echo
