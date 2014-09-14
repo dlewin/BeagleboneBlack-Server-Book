@@ -87,14 +87,12 @@ class TwistedClientApp(App):
         
         Matrix_Col_Slider = Slider(min=0, max=8, value=1)
         Matrix_Col_Slider = Slider(orientation='vertical')        
-            
-        self.ParentLayout.add_widget(Matrix_Row_Slider)                
-        
        
         self.ParentLayout.add_widget(self.Matrix_Layout)        
         self.ParentLayout.add_widget(self.label) 
         self.ParentLayout.add_widget(self.Colorspinner)
         self.ParentLayout.add_widget(Matrix_Col_Slider)
+        self.ParentLayout.add_widget(Matrix_Row_Slider)
         return self.ParentLayout
 
     def connect_to_server(self):
