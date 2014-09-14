@@ -1,4 +1,4 @@
- """
+"""
  BeagleBone Black book code by David Lewin
     Client 2 version to use with the server 
    
@@ -56,18 +56,30 @@ class TwistedClientApp(App):
         self.connect_to_server()                            # try to connect to the board
         return root
         
-    def send_message(self, *args):
-        msg = self.textbox.text
-        if msg and self.connection:
-            self.connection.write(str(self.textbox.text))
-            self.textbox.text = ""
+    def send_message(self, matrix_coords):
+        if self.connection:
+            self.connection.write(matrix_coords)
 
     def print_message(self, msg):
         self.label.text += msg + "\n"
         
     def callback(self,instance):
         self.print_message('Button nb <%s> pressed' % instance.text)
-        self.print_message(self.Colorspinner.text)
+        Btn_nb = int(instance.text)
+        Btn_x= Btn_nb %8
+        Btn_y= int((Btn_nb  ) / 8)
+        self.print_message('x <%d> ' %Btn_x )
+        self.print_message('y <%d> ' %Btn_y )
+                                    
+        SpinValue = self.Colorspinner.values.index(self.Colorspinner.text)
+        if SpinValue:
+            Color = SpinValue
+        else:
+            Color=str(1)
+        self.print_message('Color <%s> ' % Color)        
+        
+        Conct = str(Btn_x) + str(Btn_y)+ str(Color)
+        self.send_message(Conct)
     
     def onMatrix_Row_Slidervalue(self,instance,value):
         self.print_message('slider = <%s>' % value)
@@ -87,7 +99,7 @@ class TwistedClientApp(App):
         self.Matrix_Layout = GridLayout(cols=8)
         
         # Let's add a spinner to be able to select some colors
-        self.Colorspinner = Spinner(text='Choose Color', values=('Green', 'Orange', 'Red'), size_hint=(None, None),size=(90, 44), pos_hint={'center_x': .5, 'center_y': .5})
+        self.Colorspinner = Spinner(text='Green', values=('NA','Green','Red','Orange', 'Cls'), size_hint=(None, None),size=(90, 44), pos_hint={'center_x': .5, 'center_y': .5})
         
         # We define the main buttons matrix here        
         for i in range(64):
