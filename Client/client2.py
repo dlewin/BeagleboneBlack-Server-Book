@@ -1,6 +1,14 @@
-# This kivy App aims to show you how to interact with 
-# the server (BeagleBone) which accepts to receive commands 
-# for the leds matrix
+"""
+    BeagleBone Black book code by David Lewin
+    Client 2 version to use with the server 
+   
+    Start first matrixServer.py from the server before running this.
+
+
+ This kivy App aims to show you how to interact with 
+ the server (BeagleBone) which accepts to receive commands 
+ for the leds matrix
+"""
 
 #imports section
 from kivy.app import App
@@ -63,21 +71,25 @@ class TwistedClientApp(App):
         self.ParentLayout = GridLayout(cols=3, row_force_default=True, row_default_height=200)
         self.label = Label(text='connecting...\n')                
                
+        # Let's add a spinner to be able to select some colors
+        self.Colorspinner = Spinner(text='Choose Color', values=('Green', 'Orange', 'Red'), size_hint=(None, None),size=(90, 44), pos_hint={'center_x': .5, 'center_y': .5})
+        
+        # We define the main buttons matrix here
+        self.Matrix_Layout = GridLayout(cols=8)
+        for i in range(64):
+            btn = Button(text=str(i), size_hint_x=None,size_hint_y=None, width=20, height=20 )
+            btn.bind(on_press=self.callback)
+            self.Matrix_Layout.add_widget(btn)
+        
+        # Additional code to exercise, so you can adapt related code on server for example
         Matrix_Row_Slider = Slider(min=0, max=8, value=1)
-        Matrix_Row_Slider.bind(value=self.onMatrix_Row_Slidervalue)
+        Matrix_Row_Slider.bind(value=self.onMatrix_Row_Slidervalue)     # handy to know what are the slider's position
         
         Matrix_Col_Slider = Slider(min=0, max=8, value=1)
         Matrix_Col_Slider = Slider(orientation='vertical')        
             
         self.ParentLayout.add_widget(Matrix_Row_Slider)                
-        self.Matrix_Layout = GridLayout(cols=8)
-     
-        self.Colorspinner = Spinner(text='Choose Color', values=('Green', 'Orange', 'Red'), size_hint=(None, None),size=(90, 44), pos_hint={'center_x': .5, 'center_y': .5})
-                
-        for i in range(64):
-            btn = Button(text=str(i), size_hint_x=None,size_hint_y=None, width=20, height=20 )
-            btn.bind(on_press=self.callback)
-            self.Matrix_Layout.add_widget(btn)       
+        
        
         self.ParentLayout.add_widget(self.Matrix_Layout)        
         self.ParentLayout.add_widget(self.label) 

@@ -1,5 +1,5 @@
 """ BeagleBone Black book code by David Lewin
-    Server 1 version to use with the clien 1  """
+    Server 1 version to use with the client 1  """
 
 #!/usr/bin/python -O
 
