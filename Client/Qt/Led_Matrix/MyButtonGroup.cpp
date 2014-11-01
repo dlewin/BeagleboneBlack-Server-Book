@@ -9,40 +9,39 @@
 
 MyButtonGroup::MyButtonGroup(QWidget* parentWidget)
 {
-    this->setParent(parentWidget);
+    this->setParent(parentWidget)                                                       ;
 
     //> ICI
     // Import depuis le main
 
-    this->Matx_dim = 4 ;
-    QVBoxLayout *layout     = new QVBoxLayout(parentWidget)        ;
-    QHBoxLayout *Hlayout    = new QHBoxLayout()                    ;
-    QGridLayout *Glayout    = new QGridLayout()                 ;
-    Glayout->setSpacing(0)                                      ;
-    Hlayout->addStretch(1)                                      ;
-    Hlayout->addLayout(Glayout)                                 ;
-    Hlayout->addStretch(1)                                      ;
-    layout->addLayout(Hlayout)                                  ;
-    layout->addStretch(1)                                       ;
+    this->Matx_dim = 4                                                                  ;
+    QVBoxLayout *layout     = new QVBoxLayout(parentWidget)                             ;
+    QHBoxLayout *Hlayout    = new QHBoxLayout()                                         ;
+    QGridLayout *Glayout    = new QGridLayout()                                         ;
+    Glayout->setSpacing(0)                                                              ;
+    Hlayout->addStretch(1)                                                              ;
+    Hlayout->addLayout(Glayout)                                                         ;
+    Hlayout->addStretch(1)                                                              ;
+    layout->addLayout(Hlayout)                                                          ;
+    layout->addStretch(1)                                                               ;
 
-    QPushButton *Load_Btn = new QPushButton("Load Patterns")             ;
-    layout->addWidget(Load_Btn)                                 ;
-    QObject::connect(Load_Btn, SIGNAL(released()), this, SLOT(Loadfile_click()));
+    QPushButton *Load_Btn = new QPushButton("Load Patterns")                            ;
+    layout->addWidget(Load_Btn)                                                         ;
+    QObject::connect(Load_Btn, SIGNAL(released()), this, SLOT(Loadfile_click()))        ;
 
-    QPushButton *Save_Patt_Btn = new QPushButton("Save Current Pattern")             ;
-    layout->addWidget(Save_Patt_Btn)                                 ;
-    QObject::connect(Save_Patt_Btn, SIGNAL(released()), this, SLOT(Savefile_click()));
+    QPushButton *Save_Patt_Btn = new QPushButton("Save Current Pattern")                ;
+    layout->addWidget(Save_Patt_Btn)                                                    ;
+    QObject::connect(Save_Patt_Btn, SIGNAL(released()), this, SLOT(Savefile_click()))   ;
 
-    QListWidget *Patterns_List = new QListWidget()              ;
-    layout->addWidget(Patterns_List)                            ;
+    QListWidget *Patterns_List = new QListWidget()                                      ;
+    layout->addWidget(Patterns_List)                                                    ;
 
-    QPushButton *Save_PatList_Btn = new QPushButton("Save Patterns list")             ;
-    layout->addWidget(Save_PatList_Btn)                                 ;
-    QObject::connect(Save_Patt_Btn, SIGNAL(released()), this, SLOT(Savefile_click())); // Changer le SLOT !!<<
+    QPushButton *Save_PatList_Btn = new QPushButton("Save Patterns list")               ;
+    layout->addWidget(Save_PatList_Btn)                                                 ;
+    QObject::connect(Save_Patt_Btn, SIGNAL(released()), this, SLOT(Savefile_click()))   ; // TODO : Changer le SLOT !!<<<<
 
-
-    parentWidget->setLayout(layout)                            ;
-    this->Populate(Glayout )                            ;
+    parentWidget->setLayout(layout)                                                     ;
+    this->Populate(Glayout )                                                            ;
     // Fin d'Import depuis le main
 
     //connect buttonClicked signal to our custom slot 'buttonClicked'
