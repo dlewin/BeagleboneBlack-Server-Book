@@ -8,7 +8,7 @@
 class Leds_Matrix_Tools
 {
 public:
-    Leds_Matrix_Tools();
+    Leds_Matrix_Tools(QWidget *parent);
     void Write_Matrix( unsigned short x, unsigned short y, unsigned short value);
     void Populate(QGridLayout *layout, MyButtonGroup* group );
     void Clear() ;
