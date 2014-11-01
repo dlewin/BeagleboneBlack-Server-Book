@@ -2,7 +2,55 @@
 #include <QWidget>
 #include <QColor>
 #include <QFile>
+#include <QListWidget>
 #include <QDebug>
+
+
+
+MyButtonGroup::MyButtonGroup(QWidget* parentWidget)
+{
+    this->setParent(parentWidget);
+
+    //> ICI
+    // Import depuis le main
+
+    this->Matx_dim = 4 ;
+    QVBoxLayout *layout     = new QVBoxLayout(parentWidget)        ;
+    QHBoxLayout *Hlayout    = new QHBoxLayout()                    ;
+    QGridLayout *Glayout    = new QGridLayout()                 ;
+    Glayout->setSpacing(0)                                      ;
+    Hlayout->addStretch(1)                                      ;
+    Hlayout->addLayout(Glayout)                                 ;
+    Hlayout->addStretch(1)                                      ;
+    layout->addLayout(Hlayout)                                  ;
+    layout->addStretch(1)                                       ;
+
+    QPushButton *Load_Btn = new QPushButton("Load Patterns")             ;
+    layout->addWidget(Load_Btn)                                 ;
+    QObject::connect(Load_Btn, SIGNAL(released()), this, SLOT(Loadfile_click()));
+
+    QPushButton *Save_Patt_Btn = new QPushButton("Save Current Pattern")             ;
+    layout->addWidget(Save_Patt_Btn)                                 ;
+    QObject::connect(Save_Patt_Btn, SIGNAL(released()), this, SLOT(Savefile_click()));
+
+    QListWidget *Patterns_List = new QListWidget()              ;
+    layout->addWidget(Patterns_List)                            ;
+
+    QPushButton *Save_PatList_Btn = new QPushButton("Save Patterns list")             ;
+    layout->addWidget(Save_PatList_Btn)                                 ;
+    QObject::connect(Save_Patt_Btn, SIGNAL(released()), this, SLOT(Savefile_click())); // Changer le SLOT !!<<
+
+
+    parentWidget->setLayout(layout)                            ;
+    this->Populate(Glayout )                            ;
+    // Fin d'Import depuis le main
+
+    //connect buttonClicked signal to our custom slot 'buttonClicked'
+    connect(this , SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(buttonClick(QAbstractButton*)));
+
+    Clear() ;
+}
+
 
 
 void MyButtonGroup::buttonClick(QAbstractButton* button)
@@ -36,7 +84,7 @@ void MyButtonGroup::buttonClick(QAbstractButton* button)
 
 void MyButtonGroup::Clear()
 {
-    Leds_Matrix.fill(0); // Init Matrix to 0    
+    Leds_Matrix.fill(0); // Init Matrix to 0
 }
 
 void MyButtonGroup::Savefile_click()
@@ -100,28 +148,11 @@ int MyButtonGroup::Save_To_File(QString Filename)
  }
 
 
-//    out << Leds_Matrix  ;
-
-
-
  File_Ptr.close();
  return 0 ;
 }
 
 
-
-MyButtonGroup::MyButtonGroup(QWidget* parent)
-{ 
-  this->setParent(parent);
-
-      //connect buttonClicked signal to our custom slot 'buttonClick'
-  connect(this , SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(buttonClick(QAbstractButton*)));
-
-  //connect(Load_Btn , SIGNAL(clicked() ) ,this,SLOT(group->Loadfile_click() ))  ;
-
-  Clear() ;
-  qDebug() << "Appel de clear dans constructeur"     ;
-}
 
 unsigned short MyButtonGroup::Read_Matrix(unsigned short x, unsigned short y)
 {
@@ -133,7 +164,8 @@ void MyButtonGroup::Write_Matrix(unsigned short x, unsigned short y, unsigned sh
     Leds_Matrix(x,y) = value    ;
 }
 
-void MyButtonGroup::Populate(QGridLayout *layout, MyButtonGroup* group )
+//void MyButtonGroup::Populate(QGridLayout *layout, MyButtonGroup* group )
+void MyButtonGroup::Populate(QGridLayout *layout )
 {
     const int rows =8, columns = 8                             ;
 
@@ -152,7 +184,8 @@ void MyButtonGroup::Populate(QGridLayout *layout, MyButtonGroup* group )
       btn->setStyleSheet("background-color:grey;")              ;
       layout->addWidget(btn,i,j)                                ;
 
-      group->addButton(btn)                              ;
+      this->addButton(btn)                              ;
+      //group->addButton(btn)                              ;
      }
     }
 }

@@ -18,7 +18,7 @@ class MyButtonGroup: public QButtonGroup
     int Matx_dim ;
     unsigned short Read_Matrix( unsigned short x, unsigned short y)                 ;
     void Write_Matrix( unsigned short x, unsigned short y, unsigned short value)    ;
-    void Populate(QGridLayout *layout, MyButtonGroup* group )                       ;
+    void Populate(QGridLayout *layout )                       ;
     void Clear()                                                                    ;
     int Save_To_File(QString Filename)                                              ;
     int Load_From_File(QString Filename)                                            ;
