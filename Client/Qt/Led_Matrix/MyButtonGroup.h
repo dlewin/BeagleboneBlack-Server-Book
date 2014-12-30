@@ -7,21 +7,27 @@
 #include <QMessageBox>
 #include <QGenericMatrix>
 #include <QGridLayout>
+#include <QTcpSocket>
+
 
 //Derived Class from QButtonGroup
 class MyButtonGroup: public QButtonGroup
 {
   Q_OBJECT  
   private :
-    QGenericMatrix<8,8,int> Leds_Matrix                                             ;
+    QGenericMatrix<8,8, int> Leds_Matrix                                             ;
+    QList<int> Matrix_List ;
+    QByteArray Matrix_Ba ;
+    QTcpSocket *socket  ;
   public:
     int Matx_dim ;
-    unsigned short Read_Matrix( unsigned short x, unsigned short y)                 ;
-    void Write_Matrix( unsigned short x, unsigned short y, unsigned short value)    ;
+    unsigned short Read_Matrix(unsigned short Index)                 ;
+    void Write_Matrix(unsigned short Index, unsigned short Value)    ;
     void Populate(QGridLayout *layout )                       ;
     void Clear()                                                                    ;
     int Save_To_File(QString Filename)                                              ;
     int Load_From_File(QString Filename)                                            ;
+    void Send_Pattern()                ;
 
     MyButtonGroup(QWidget* parent)                                                  ;
   /*  {
@@ -39,6 +45,7 @@ class MyButtonGroup: public QButtonGroup
     void buttonClick(QAbstractButton* button) ;
     void Loadfile_click() ;
     void Savefile_click() ;
+    void Send_Pattern_click() ;
 };
 
 #endif // MYBUTTONGROUP_H

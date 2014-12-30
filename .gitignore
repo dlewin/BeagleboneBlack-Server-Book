@@ -1,1 +1,12 @@
+*.pro.user
+*.o
+*.exe
+*.Debug
+*.Release
+Client/Qt/build-Led_Matrix3-Desktop_Qt_5_0_2_MinGW_32bit-Debug/debug/moc_mainwindow.cpp
+Client/Qt/build-Led_Matrix3-Desktop_Qt_5_0_2_MinGW_32bit-Debug/debug/moc_MyButtonGroup.cpp
+Client/Qt/build-Led_Matrix3-Desktop_Qt_5_0_2_MinGW_32bit-Debug/ui_mainwindow.h
+Client/Qt/Led_Matrix/Led_Matrix3.pro.user
+Client/Qt/Led_Matrix/Led_Matrix3.pro.user
+Client/Qt/build-Led_Matrix3-Desktop_Qt_5_0_2_MinGW_32bit-Debug/Makefile
 Client/Qt/Led_Matrix/Led_Matrix3.pro.user

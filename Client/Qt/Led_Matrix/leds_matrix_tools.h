@@ -13,7 +13,7 @@ public:
     void Populate(QGridLayout *layout, MyButtonGroup* group );
     void Clear() ;
 private:
-    QGenericMatrix<4,4,int> Leds_Matrix ;
+    QGenericMatrix<8,8,int> Leds_Matrix ;
 };
 
 #endif // LEDS_MATRIX_TOOLS_H
