@@ -12,7 +12,8 @@ MyButtonGroup::MyButtonGroup(QWidget* parentWidget)
 {
     this->setParent(parentWidget)                                                       ;
 
-    this->Matrix_Ba.resize(64);
+    //this->Matrix_Ba.resize(64);
+    //QStringList Matrix_SL  ;
     this->Matx_dim = 8                                                                  ;
 
     QVBoxLayout *layout     = new QVBoxLayout(parentWidget)                             ;
@@ -25,25 +26,25 @@ MyButtonGroup::MyButtonGroup(QWidget* parentWidget)
     layout->addLayout(Hlayout)                                                          ;
     layout->addStretch(1)                                                               ;
 
-    QPushButton *Send_Pattern = new QPushButton("Send Pattern")                            ;
-    layout->addWidget(Send_Pattern)                                                         ;
-    QObject::connect(Send_Pattern, SIGNAL(released()), this, SLOT(Send_Pattern_click()))        ;
+    QPushButton *Send_Pattern = new QPushButton("Send Pattern")                         ;
+    layout->addWidget(Send_Pattern)                                                     ;
+    QObject::connect(Send_Pattern, SIGNAL(released()), this, SLOT(Send_Pattern_click() )) ;
 
     QPushButton *Load_Btn = new QPushButton("Load Patterns")                            ;
     layout->addWidget(Load_Btn)                                                         ;
-    QObject::connect(Load_Btn, SIGNAL(released()), this, SLOT(Loadfile_click()))        ;
+    QObject::connect(Load_Btn, SIGNAL(released()), this, SLOT(Loadfile_click() ))       ;
 
     QPushButton *Save_Patt_Btn = new QPushButton("Save Current Pattern")                ;
     layout->addWidget(Save_Patt_Btn)                                                    ;
-    QObject::connect(Save_Patt_Btn, SIGNAL(released()), this, SLOT(Savefile_click()))   ;
+    QObject::connect(Save_Patt_Btn, SIGNAL(released()), this, SLOT( Save_Pattern_click() ))   ;
 
     QListWidget *Patterns_List = new QListWidget()                                      ;
     layout->addWidget(Patterns_List)                                                    ;
 
-  /*  QPushButton *Save_PatList_Btn = new QPushButton("Save Patterns list")               ;
-    layout->addWidget(Save_PatList_Btn)                                                 ;
-    QObject::connect(Save_Patt_Btn, SIGNAL(released()), this, SLOT(Savefile_click()))   ; // TODO : Changer le SLOT !!<<<<
-*/
+    QPushButton *Save_List_Btn = new QPushButton("Save Patterns list")               ;
+    layout->addWidget(Save_List_Btn)                                                 ;
+    QObject::connect(Save_List_Btn, SIGNAL(released()), this, SLOT( Savefile_click() )) ;
+
     parentWidget->setLayout(layout)                                                     ;
     this->Populate(Glayout )                                                            ;
 
@@ -61,87 +62,94 @@ void MyButtonGroup::buttonClick(QAbstractButton* button)
    int row = new_ID/8 ;
    int col = new_ID - (8 * row) ;
 
-   //unsigned short btn_value = this->Read_Matrix(row, col)  ;
-   unsigned short btn_value = this->Read_Matrix(new_ID)  ;
+ //if (!Matrix_SL.isEmpty())
+ {
+    QChar  Btn_Color = Current_Pattern[new_ID]               ;
 
-   switch( btn_value )
-    {
-     case 0:    button->setStyleSheet("background-color:green;")    ;
-       btn_value++ ;
-        break ;
-     case 1:    button->setStyleSheet("background-color:orange;");
-       btn_value++ ;
-        break ;
-     case 2:    button->setStyleSheet("background-color:red;");
-       btn_value++ ;
-        break ;
-     case 3:    button->setStyleSheet("background-color:grey;");
-        btn_value = 0 ;
-        break ;
-    }
- // this->Write_Matrix(row, col,btn_value );
-  Write_Matrix(new_ID, btn_value) ;
+   if (Btn_Color == '0')
+   {
+       button->setStyleSheet("background-color:green;")     ;
+       Btn_Color ='1'                                       ;
+   }
+   else if (Btn_Color == '1')
+   {
+       button->setStyleSheet("background-color:orange;")    ;
+       Btn_Color ='2'                                       ;
+   }
+   else if (Btn_Color == '2')
+   {
+       button->setStyleSheet("background-color:red;")       ;
+       Btn_Color ='3'                                       ;
+   }
+   else
+   {
+       button->setStyleSheet("background-color:grey;")      ;
+       Btn_Color ='0'                                       ;
+   }
+
+   Write_Matrix(new_ID, Btn_Color)                          ;
+ }
+ //else   qDebug() << "Nothing to do : Matrix is empty"          ;
+
 }
+
+/* Initiate the matrix with "off" value */
 
 void MyButtonGroup::Clear()
 {
-    Leds_Matrix.fill(0); // Init Matrix to 0
+  // Init Matrix to 0
+
+  for (int i = 0; i < ( Matx_dim * Matx_dim) ; ++i)
+      Current_Pattern[i] = QChar('0') ;
+
+  Matrix_SL.clear();
 }
 
-
-/*  TODO :
- 1/ the data to be sent is made of x,y and a color attribute
- 2/ The server must be modified as the 4 1st bytes are 0x00 0x00 0x00 0x40 ->which represent 64, the size of the ByteArray
- 3/ Carefull Matrix must be filled before send it
-*/
-
+/*
+ * TODO : no need to overload the tcp data.
+ * The best thing to do is to compare the current led(x,y) with the one sent previously :
+ * if there is no change : don't send anything
+ */
 
 void MyButtonGroup::Send_Pattern_click()
 {
-    unsigned short btn_value, i;
+    unsigned short btn_value, i=0;
     socket = new QTcpSocket(this);
     int row, col ;
-    socket->connectToHost("google.com",80); // change to BBB server address/port
+    QString Tosend ;
 
-  //  if(socket->waitForConnected(3000))
+    socket->connectToHost("localhost",8000); // change to BBB server address/port
+
+    if(socket->waitForConnected(3000))
     {
         qDebug() << "Connected!";
 
-        //send the current matrix to serverS
-        for (i=0;i < Matrix_Ba.size(); i++ )
+        foreach (QString QSvalue, Matrix_SL)
         {
-              // Adaptation to compute the btn with the matrix
-            row = i/8 ;
-            col = i - (8 * row) ;
-       //  socket->write(row, col, Matrix_Ba[i] ) ;
+            for (i=0;i < ( Matx_dim * Matx_dim); i++ )
+            {
+                row = i/8                                                                ; // replace with Matx_dim
+                col = i - (8 * row)                                                      ;
+                //QSvalue = javaStyleIterator.next().toLocal8Bit().constData()   ;
+                Tosend = QString::number (row ) + QString::number(col) + QSvalue[i]      ;
+                socket->write( Tosend.toLatin1() )                                       ;
+                qDebug() << "Sending:"<< i <<" " << Tosend.toLatin1()                    ;
+            }
         }
-
-    //    socket->write("hello server\r\n\r\n\r\n\r\n");
-
-        socket->waitForBytesWritten(1000);
-        socket->waitForReadyRead(3000);
-        qDebug() << "Reading: " << socket->bytesAvailable();
-
-        qDebug() << socket->readAll();
-
         socket->close();
     }
-    //else
-    {
-        qDebug() << "Not Connected!";
-    }
+    else         qDebug() << "Not Connected!"                                           ;
 }
+
 
 void MyButtonGroup::Savefile_click()
 {
  Save_To_File("Led_Matrix.mtx") ;
- qDebug() << "Savefile_click" ;
 }
 
 void MyButtonGroup::Loadfile_click()
 {
  Load_From_File("Led_Matrix.mtx") ;
- qDebug() << "Loadfile_click ." ;
 }
 
 int MyButtonGroup::Load_From_File(QString Filename)
@@ -150,12 +158,23 @@ int MyButtonGroup::Load_From_File(QString Filename)
     this->Clear()                               ;
 
     QFile File_Ptr(Filename)                    ;
-    if (!File_Ptr.open( QIODevice::ReadOnly  ) )
-        return 1                                ;
+    if (!File_Ptr.open( QIODevice::ReadOnly | QFile::Text ) )
+    {
+      qDebug() << "error opening " << Filename << endl      ;
+      return EXIT_FAILURE;                                  ;
+    }
+    else
+    {
+      QTextStream In_Stream( &File_Ptr );
+      while ( !In_Stream.atEnd() )
+        Matrix_SL += In_Stream.readLine();
+    }
 
-    this->Matrix_Ba = File_Ptr.readAll()      ;
+    qDebug() << "Loadfromfile got:" << Matrix_SL ;
 
-/*    QByteArray buffer = File_Ptr.readAll()      ;
+/*    this->Matrix_Ba = File_Ptr.readAll()      ;
+
+    QByteArray buffer = File_Ptr.readAll()      ;
 
     for ( i = 0; i < Matx_dim ; i++)
     {
@@ -166,66 +185,64 @@ int MyButtonGroup::Load_From_File(QString Filename)
      }
     }
 */
+
+    // read data
+
+
     File_Ptr.close();
     return 0 ;
 }
 
 
-void MyButtonGroup::Write_Matrix(unsigned short Index, unsigned short Value)
+void MyButtonGroup::Write_Matrix(unsigned short Index, QChar Color_Value )
 { 
- this->Matrix_Ba[Index] = Value ;
-    //   Leds_Matrix(x,y) = value    ;
+ Current_Pattern[Index] =  Color_Value ;
 }
 
-/* http://doc.qt.io/qt-5/containers.html#java-style-iterators */
 
-/* Work as is but is not sufficient.
-At the end we'll need a list of matrices for patterns saving purpose.
-In that end, using a list of QByteArray list is the best to do :
+void MyButtonGroup::Save_Pattern_click()
+{
+  Matrix_SL << Current_Pattern  ;
+  qDebug() << "Current Pattern:" << Current_Pattern << endl ;
+  qDebug() << "StringList :" << Matrix_SL << endl ;
+}
+
+
+/* Using a list of QByteArray list is the best to do :
 http://doc.qt.io/qt-5/qbytearraylist.html#details
-http://www.qtcentre.org/threads/35541-split-QByteArray?highlight=QByteArray */
+http://www.qtcentre.org/threads/35541-split-QByteArray?highlight=QByteArray
+*/
 
 int MyButtonGroup::Save_To_File(QString Filename)
 {
-    //int val[64]={};
-    //unsigned short index ;
-    QFile File_Ptr(Filename) ;
-    QDataStream out(&File_Ptr) ;
+  QFile File_Out(Filename);
+  if (File_Out.open(QFile::WriteOnly | QFile::Text))
+  {
+    QTextStream Out_Stream( &File_Out );
 
- out.setVersion(QDataStream::Qt_5_3);
+    foreach(QString itm, Matrix_SL)
+        Out_Stream << itm ;
+  }
+  else
+  {
+    qDebug() << "error opening " << Filename << endl;
+    return EXIT_FAILURE;
+  }
+  File_Out.close();
 
- if (!File_Ptr.open(QIODevice::WriteOnly ) )
- {
-    qDebug() << "Issue with file save"  ;
-    return 1 ;
- }
-
-/* OK fonctinne ici mais mieux avec list ou Qbytearraylist
- Leds_Matrix.copyDataTo( val );
- for ( index=0; index<64;index++)
- {
-   out << (val[index])   ;
- }*/
-
- // Nouveau Test  :
-
- out << this->Matrix_Ba ;
-
-  File_Ptr.close();
   return 0 ;
-
 }
 
-//unsigned short MyButtonGroup::Read_Matrix(unsigned short x, unsigned short y)
-unsigned short MyButtonGroup::Read_Matrix(unsigned short Index)
+
+QString MyButtonGroup::Read_Matrix(unsigned short Index)
 {
-  //  return Leds_Matrix(x,y);
-    return Matrix_Ba[Index] ;
+    return Matrix_SL[Index] ;
 }
+
 
 void MyButtonGroup::Populate(QGridLayout *layout )
 {
-    const int rows = this->Matx_dim, columns = this->Matx_dim                             ;
+    const int rows =8, columns = 8                             ;
 
     for (int i = 0; i < rows; ++ i)
     {

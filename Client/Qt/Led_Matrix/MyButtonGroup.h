@@ -15,14 +15,15 @@ class MyButtonGroup: public QButtonGroup
 {
   Q_OBJECT  
   private :
-    QGenericMatrix<8,8, int> Leds_Matrix                                             ;
-    QList<int> Matrix_List ;
-    QByteArray Matrix_Ba ;
-    QTcpSocket *socket  ;
+  //  QGenericMatrix<8,8, int> Leds_Matrix                                           ;
+  //  QByteArray  Matrix_Ba                                                          ;
+    QStringList Matrix_SL                                                           ;
+    QString     Current_Pattern                                                     ;
+    QTcpSocket  *socket                                                             ;
   public:
     int Matx_dim ;
-    unsigned short Read_Matrix(unsigned short Index)                 ;
-    void Write_Matrix(unsigned short Index, unsigned short Value)    ;
+    QString Read_Matrix(unsigned short Index)                 ;
+    void Write_Matrix(unsigned short Index, QChar Color_Value ) ;
     void Populate(QGridLayout *layout )                       ;
     void Clear()                                                                    ;
     int Save_To_File(QString Filename)                                              ;
@@ -46,6 +47,7 @@ class MyButtonGroup: public QButtonGroup
     void Loadfile_click() ;
     void Savefile_click() ;
     void Send_Pattern_click() ;
+    void Save_Pattern_click() ;
 };
 
 #endif // MYBUTTONGROUP_H
