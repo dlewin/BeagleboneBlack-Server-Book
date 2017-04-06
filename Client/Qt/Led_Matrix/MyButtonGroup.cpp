@@ -11,9 +11,6 @@
 MyButtonGroup::MyButtonGroup(QWidget* parentWidget)
 {
     this->setParent(parentWidget)                                                       ;
-
-    //this->Matrix_Ba.resize(64);
-    //QStringList Matrix_SL  ;
     this->Matx_dim = 8                                                                  ;
 
     QVBoxLayout *layout     = new QVBoxLayout(parentWidget)                             ;
@@ -57,14 +54,9 @@ MyButtonGroup::MyButtonGroup(QWidget* parentWidget)
 
 void MyButtonGroup::buttonClick(QAbstractButton* button)
 {
-    int new_ID = abs (this->id(button)) -2 ;  // Adaptation to compute the btn with the matrix
+   int new_ID = abs (this->id(button)) -2 ;  // Adaptation to compute the btn with the matrix
 
-   int row = new_ID/8 ;
-   int col = new_ID - (8 * row) ;
-
- //if (!Matrix_SL.isEmpty())
- {
-    QChar  Btn_Color = Current_Pattern[new_ID]               ;
+   QChar  Btn_Color = Current_Pattern[new_ID]               ;
 
    if (Btn_Color == '0')
    {
@@ -88,32 +80,25 @@ void MyButtonGroup::buttonClick(QAbstractButton* button)
    }
 
    Write_Matrix(new_ID, Btn_Color)                          ;
- }
- //else   qDebug() << "Nothing to do : Matrix is empty"          ;
-
 }
 
 /* Initiate the matrix with "off" value */
 
 void MyButtonGroup::Clear()
 {
-  // Init Matrix to 0
-
+      // Init Matrix to 0
   for (int i = 0; i < ( Matx_dim * Matx_dim) ; ++i)
       Current_Pattern[i] = QChar('0') ;
 
   Matrix_SL.clear();
 }
 
-/*
- * TODO : no need to overload the tcp data.
- * The best thing to do is to compare the current led(x,y) with the one sent previously :
- * if there is no change : don't send anything
- */
+///TODO : no need to overload the tcp data.
+/// The best thing to do is to compare the current led(x,y) with the one sent previously :
+/// if there is no change : don't send anything
 
 void MyButtonGroup::Send_Pattern_click()
 {
-    unsigned short btn_value, i=0;
     socket = new QTcpSocket(this);
     int row, col ;
     QString Tosend ;
@@ -126,7 +111,7 @@ void MyButtonGroup::Send_Pattern_click()
 
         foreach (QString QSvalue, Matrix_SL)
         {
-            for (i=0;i < ( Matx_dim * Matx_dim); i++ )
+            for ( unsigned short i=0; i < ( Matx_dim * Matx_dim); i++ )
             {
                 row = i/8                                                                ; // replace with Matx_dim
                 col = i - (8 * row)                                                      ;
@@ -172,23 +157,7 @@ int MyButtonGroup::Load_From_File(QString Filename)
 
     qDebug() << "Loadfromfile got:" << Matrix_SL ;
 
-/*    this->Matrix_Ba = File_Ptr.readAll()      ;
-
-    QByteArray buffer = File_Ptr.readAll()      ;
-
-    for ( i = 0; i < Matx_dim ; i++)
-    {
-     for ( j = 0; j < Matx_dim; j++)
-     {
-      this->Write_Matrix( i,j, (unsigned short)buffer[i+j] );
-      qDebug() << i << j << buffer[i+j]  ;
-     }
-    }
-*/
-
-    // read data
-
-
+        // read data
     File_Ptr.close();
     return 0 ;
 }
@@ -207,11 +176,11 @@ void MyButtonGroup::Save_Pattern_click()
   qDebug() << "StringList :" << Matrix_SL << endl ;
 }
 
+/// TODO
+/// Using a list of QByteArray list is the best to do :
+/// doc.qt.io/qt-5/qbytearraylist.html#details
+/// www.qtcentre.org/threads/35541-split-QByteArray?highlight=QByteArray
 
-/* Using a list of QByteArray list is the best to do :
-http://doc.qt.io/qt-5/qbytearraylist.html#details
-http://www.qtcentre.org/threads/35541-split-QByteArray?highlight=QByteArray
-*/
 
 int MyButtonGroup::Save_To_File(QString Filename)
 {
@@ -249,18 +218,12 @@ void MyButtonGroup::Populate(QGridLayout *layout )
      for (int j = 0; j < columns; ++j)
      {
       QString index = QStringLiteral("(%1,%2)").arg(i).arg(j)   ;
-      //QPushButton* btn = new QPushButton(index)                 ;
       QPushButton* btn = new QPushButton("-")                 ;
       btn->setFixedWidth(20);
-     // layout->setColumnMinimumWidth(j,2);
-
-   //   btn->setFlat(true);
-
       btn->setStyleSheet("background-color:grey;")              ;
       layout->addWidget(btn,i,j)                                ;
 
       this->addButton(btn)                              ;
-      //group->addButton(btn)                              ;
      }
     }
 }
