@@ -8,6 +8,7 @@
 #include <QByteArray>
 
 
+ ///TODO OLD CODE TO UPDATE
 MyButtonGroup::MyButtonGroup(QWidget* parentWidget)
 {
     this->setParent(parentWidget)                                                       ;
@@ -139,7 +140,6 @@ void MyButtonGroup::Loadfile_click()
 
 int MyButtonGroup::Load_From_File(QString Filename)
 {
-    //unsigned short i,j                          ;
     this->Clear()                               ;
 
     QFile File_Ptr(Filename)                    ;
@@ -176,9 +176,8 @@ void MyButtonGroup::Save_Pattern_click()
   qDebug() << "StringList :" << Matrix_SL << endl ;
 }
 
-/// TODO
-/// Using a list of QByteArray list is the best to do :
-/// doc.qt.io/qt-5/qbytearraylist.html#details
+/// TODO Better using a list of QByteArray list
+/// is the best to do : doc.qt.io/qt-5/qbytearraylist.html#details
 /// www.qtcentre.org/threads/35541-split-QByteArray?highlight=QByteArray
 
 

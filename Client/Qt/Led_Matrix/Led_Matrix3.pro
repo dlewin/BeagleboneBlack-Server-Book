@@ -15,10 +15,10 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     MyButtonGroup.cpp \
-    leds_matrix_tools.cpp
+    ledsmatrix.cpp
 
 HEADERS  += mainwindow.h \
     MyButtonGroup.h \
-    leds_matrix_tools.h
+    ledsmatrix.h
 
 FORMS    += mainwindow.ui
